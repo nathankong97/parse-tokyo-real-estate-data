@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 import requests, re, pandas as pd, urllib.request, os, json, pymongo
+import matplotlib.pyplot as plot
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["real_estate_data"]
