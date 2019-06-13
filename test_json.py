@@ -1,5 +1,7 @@
 import json, numpy as np, matplotlib.pyplot as plt,re
 from scipy import stats
+from pylab import *
+mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 #read and load the json data
 with open('data_file.json', encoding="utf8") as json_file:
@@ -86,6 +88,7 @@ transit_num = [len([int(re.findall("\d+",n)[0]) for n in i["transit"] if re.find
 
 #output
 #print(transit_num)
+print(direction_rent)
 print("the average rent by building types are:",sort_avg_rent_by_type)
 print("the 5 most expensive 町 are:",sort_avg_rent_by_machi[::-1][:5])
 print("the 5 cheapest 町 are:",sort_avg_rent_by_machi[:5])
@@ -94,6 +97,7 @@ print("the 5 cheapest layout are:",sort_avg_rent_by_layout[::-1][:5])
 print("the 5 most expensive layout are:",sort_avg_rent_by_layout[:5])
 print("the coorelation coefficient between rent and size is:", round(np.corrcoef(rent, size)[0][1], 4))
 print("the coorelation coefficient between rent and built year is:", round(np.corrcoef(rent, years)[0][1], 4))
+print("the coorelation coefficient between built years and size year is:", round(np.corrcoef(years, size)[0][1], 4))
 print("the average rent is:",round(np.mean(rent), 2), "万日元")
 print("the average size is:",round(np.mean(size), 2), "m2")
 print("the types of layout are:",sorted_x[:5])
@@ -103,8 +107,13 @@ print("the average built years for buildings is:", round(np.mean(years), 0), "ye
 print("the average time to walk to the closest transit station is:", round(np.mean(transit_time), 2), "min")
 print("the most popular 町 are:",machi[:5])
 print()
-print(data[0])
+#print(data[0])
 
+
+labels, direction_data = [*zip(*direction_rent.items())]
+plt.boxplot(direction_data)
+plt.xticks(range(1, len(labels) + 1), labels)
+plt.show()
 
 plt.xlim(0,140)
 plt.ylim(0,2400)
@@ -138,4 +147,15 @@ plt.scatter(x, y, c = "green", alpha=0.3, s = 50)
 plt.title('Scatter Correlation between Rent and Built Years')
 plt.xlabel("Rent (ten thousand yen)")
 plt.ylabel('Year(s)')
+plt.show()
+
+x = np.asarray(years)
+y = np.asarray(size)
+slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+line = slope * x + intercept
+plt.plot(x, line, 'r', label='y={:.2f}x+{:.2f}'.format(slope,intercept), c = 'pink', linewidth = 1)
+plt.scatter(x, y, c = "grey", alpha=0.3, s = 50)
+plt.title('Scatter Correlation between built years and Size')
+plt.xlabel("Years)")
+plt.ylabel('Size (m2)')
 plt.show()
