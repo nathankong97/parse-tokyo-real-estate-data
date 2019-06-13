@@ -9,7 +9,7 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["real_estate_data"]
 mycol = mydb["tokyo"]
 
-url = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ta=13&sc=13101&ar=030&bs=040&pn=1'
+url = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ar=030&bs=040&ta=13&sc=13102&sngz=&po1=25&po2=99&pc=100&pn=1'
 web_page = urllib.request.urlopen(url)
 contents = web_page.read().decode(errors="replace")
 web_page.close()
@@ -24,8 +24,8 @@ data = {}
 for n in range(total_page):
     page_num = n + 1
     if page_num % 30 == 0:
-        time.sleep(60)
-    url = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ta=13&sc=13101&ar=030&bs=040&pn={page_num}'
+        time.sleep(20)
+    url = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ar=030&bs=040&ta=13&sc=13102&sngz=&po1=25&po2=99&pc=100&pn={page_num}'
     web_page = urllib.request.urlopen(url.format(page_num = page_num))
     contents = web_page.read().decode(errors="replace")
     web_page.close()
@@ -60,9 +60,14 @@ for n in range(total_page):
         data["transit"] = [i.get_text() for i in transit.find_all("div")]
         #x = mycol.insert_one(data)
         #print(x.inserted_id)
+        print(data.copy())
         total_list.append(data.copy())
-    time.sleep(30)
+    time.sleep(2)
     print(page_num)
+
+
+
+final_list = [i for n, i in enumerate(total_list) if i not in total_list[n + 1:]]
 print("done")
-with open("data_file.json", "w", encoding='utf-8') as f:
-    json.dump(total_list, f, ensure_ascii=False)
+with open("data_file2.json", "w", encoding='utf-8') as f:
+    json.dump(final_list, f, ensure_ascii=False)

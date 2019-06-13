@@ -1,6 +1,7 @@
 import json, numpy as np, matplotlib.pyplot as plt,re
 from scipy import stats
 from pylab import *
+from collections import Counter
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 #read and load the json data
@@ -83,12 +84,15 @@ sort_avg_rent_by_type = sorted(avg_rent_by_type.items(), key=lambda kv: kv[1], r
 
 #transit information
 transit_num = [len([int(re.findall("\d+",n)[0]) for n in i["transit"] if re.findall("\d+",n) != []]) for i in data]
+line = [n.split("/")[0] for i in data for n in i['transit']]
+line_count = Counter(line)
+station = [n.split("/")[1].split(" ")[0] for i in data for n in i['transit'] if len(n.split("/")) == 2]
+station_count = Counter(station)
 
 
 
 #output
-#print(transit_num)
-print(direction_rent)
+print(station_count)
 print("the average rent by building types are:",sort_avg_rent_by_type)
 print("the 5 most expensive 町 are:",sort_avg_rent_by_machi[::-1][:5])
 print("the 5 cheapest 町 are:",sort_avg_rent_by_machi[:5])
@@ -110,7 +114,14 @@ print()
 #print(data[0])
 
 
-labels, direction_data = [*zip(*direction_rent.items())]
+#plot
+"""plt.scatter(transit_num, rent,c = "purple", alpha=0.3, s = 50)
+plt.title('Scatter Correlation between Rent and Size')
+plt.ylabel("Rent (ten thousand yen)")
+plt.xlabel('Number of transit ways')
+plt.show()"""
+
+"""labels, direction_data = [*zip(*direction_rent.items())]
 plt.boxplot(direction_data)
 plt.xticks(range(1, len(labels) + 1), labels)
 plt.show()
@@ -153,9 +164,9 @@ x = np.asarray(years)
 y = np.asarray(size)
 slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 line = slope * x + intercept
-plt.plot(x, line, 'r', label='y={:.2f}x+{:.2f}'.format(slope,intercept), c = 'pink', linewidth = 1)
+plt.plot(x, line, 'r', label='y={:.2f}x+{:.2f}'.format(slope,intercept), c = 'blue', linewidth = 1)
 plt.scatter(x, y, c = "grey", alpha=0.3, s = 50)
 plt.title('Scatter Correlation between built years and Size')
 plt.xlabel("Years)")
 plt.ylabel('Size (m2)')
-plt.show()
+plt.show()"""
